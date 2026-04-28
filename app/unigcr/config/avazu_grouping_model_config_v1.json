@@ -1,0 +1,10 @@
+{
+  "feature_groups": {
+    "time_group": ["hour", "weekday", "is_weekend"],
+    "site_group": ["C1", "banner_pos", "site_id", "site_domain", "site_category"],
+    "app_group": ["app_id", "app_domain", "app_category"],
+    "device_group": ["device_id", "device_ip", "device_model", "device_type", "device_conn_type"],
+    "ad_group_1": ["C15", "C16", "C17"],
+    "ad_group_2": ["C18", "C19", "C20", "C21"]
+  }
+}

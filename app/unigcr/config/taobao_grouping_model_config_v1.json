@@ -1,0 +1,11 @@
+{
+  "feature_groups": {
+    "user_group_1": ["final_gender_code", "age_level", "occupation", "new_user_class_level", "pvalue_level"],
+    "user_group_2": ["shopping_level", "cms_segid", "cms_group_id"],
+    "item_group": ["price", "brand", "pid", "cate_id"],
+    "advertiser_group": ["adgroup_id", "campaign_id", "customer"],
+    "sequence_1": ["btag_his"],
+    "sequence_2": ["cate_his"],
+    "sequence_3": ["brand_his"]
+  }
+}
