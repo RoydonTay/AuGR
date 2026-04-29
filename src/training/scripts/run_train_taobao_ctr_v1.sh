@@ -2,9 +2,9 @@
 # =============================================================================
 # TaoBao CTR training launcher
 # Usage:
-#   bash run_train_taobao_ctr_v1.sh <exp> [dataset_root]
+#   bash run_train_taobao_ctr_v1.sh <exp>
 # Example:
-#   bash run_train_taobao_ctr_v1.sh local_exp /data/BARS-CTR/TaoBao
+#   bash run_train_taobao_ctr_v1.sh local_exp
 # =============================================================================
 
 export WANDB_START_METHOD="thread"
