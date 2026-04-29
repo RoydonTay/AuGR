@@ -3,7 +3,7 @@ from typing import Dict
 import torch
 from torch import nn
 
-from ..models.hstu_full_self_attention import HSTUFullSelfAttentionLayer
+from .hstu_full_self_attention import HSTUFullSelfAttentionLayer
 from .avazu_unified_model import AvazuUniGCRConfig, AvazuUniGCRModel
 
 

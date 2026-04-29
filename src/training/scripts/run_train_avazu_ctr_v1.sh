@@ -15,8 +15,6 @@ set -euo pipefail
 exp=${1:-local}
 DATASET_ROOT='/home/work/chatbot-llms-3/roydon.tay/BARS-CTR/Avazu_x4' # set your dataset root path here
 
-export PYTHONPATH='/home/work/chatbot-llms-3/roydon.tay/chatbot_rcmd' # set your own PYTHONPATH
-
 # Inputs
 TRAIN_DATA_PATH=${TRAIN_DATA_PATH:-"${DATASET_ROOT}/train.csv"}
 VALID_DATA_PATH=${VALID_DATA_PATH:-"${DATASET_ROOT}/valid.csv"}
@@ -43,7 +41,7 @@ MOE_NUM_EXPERTS=${MOE_NUM_EXPERTS:-4}
 MOE_TOP_K=${MOE_TOP_K:-1}
 MOE_FFN_DIM=${MOE_FFN_DIM:-0}
 
-OUTPUT_DIR=${OUTPUT_DIR:-"/home/work/chatbot-llms-3/roydon.tay/chatbot_rcmd/app/unigcr/outputs/output_avazu_sc_moe_${exp}"}
+OUTPUT_DIR=${OUTPUT_DIR:-"./outputs/output_avazu_sc_moe_${exp}"}
 
 echo "[Avazu CTR] exp=${exp}"
 echo "[Avazu CTR] train=${TRAIN_DATA_PATH}"
@@ -73,9 +71,9 @@ if [[ ! -f "${AVAZU_VOCAB_PATH}" ]]; then
   exit 1
 fi
 
-cd /home/work/chatbot-llms-3/roydon.tay/chatbot_rcmd
+cd ../../.. # change to repo root
 
-python -m app.unigcr.train_avazu_unigcr \
+python -m src.training.train_avazu_unigcr \
   --train_data_path "${TRAIN_DATA_PATH}" \
   --valid_data_path "${VALID_DATA_PATH}" \
   --avazu_vocab_path "${AVAZU_VOCAB_PATH}" \

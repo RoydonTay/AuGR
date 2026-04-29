@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from transformers import PreTrainedModel, PretrainedConfig
 
 from .moe_layer import MoEFFN
-from ..models.hstu import HSTULayer
+from .hstu import HSTULayer
 from intentrcmd.modules.custom_loss import calc_aux_loss_weight
 
 

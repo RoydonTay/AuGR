@@ -4,12 +4,80 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from transformers import PreTrainedModel, PretrainedConfig
+from intentrcmd.modules.pooling_layer import MultiheadAttentionPooling, SelfAttentionPooling
 
 from intentrcmd.modules.custom_loss import calc_aux_loss_weight
 
-from ..models.hstu import HSTULayer
+from .hstu import HSTULayer
 from .moe_layer import MoEFFN
-from .taobao_unified_model import TaobaoUserSeqEncoder
+
+
+POOLING_CLS = {
+    "self_attention": SelfAttentionPooling,
+    "multihead_attention": MultiheadAttentionPooling,
+}
+
+
+class TaobaoUserSeqEncoder(nn.Module):
+    """Sequence feature encoder aligned with UserSeqEncoder behavior."""
+
+    def __init__(
+        self,
+        sequence_feature_names: List[str],
+        feature_embeddings: nn.ModuleDict,
+        feature_vocab_sizes: Dict[str, int],
+        emb_size: int,
+        d_model: int,
+        dropout: float = 0.2,
+        pooling_type: str = "self_attention",
+    ):
+        super().__init__()
+        if pooling_type not in POOLING_CLS:
+            raise ValueError(f"Unsupported pooling type: {pooling_type}")
+
+        self.sequence_feature_names = sequence_feature_names
+        self.feature_embeddings = feature_embeddings
+        self.feature_vocab_sizes = feature_vocab_sizes
+
+        self.dropout_layers = nn.ModuleDict({
+            name: nn.Dropout(dropout) for name in sequence_feature_names
+        })
+        self.pooling_layers = nn.ModuleDict({
+            name: POOLING_CLS[pooling_type](hidden_size=emb_size, dropout=dropout)
+            for name in sequence_feature_names
+        })
+        self.output_projections = nn.ModuleDict({
+            name: nn.Sequential(
+                nn.Linear(emb_size, d_model),
+                nn.PReLU(),
+                nn.Dropout(dropout),
+            )
+            for name in sequence_feature_names
+        })
+
+    def forward(self, kwargs: Dict[str, torch.Tensor]) -> Optional[torch.Tensor]:
+        seq_tokens = []
+        for name in self.sequence_feature_names:
+            if name not in kwargs:
+                raise ValueError(f"Missing sequence feature in model inputs: {name}")
+
+            values = kwargs[name].long()
+            if values.dim() == 1:
+                values = values.unsqueeze(1)
+            num_embeddings = self.feature_vocab_sizes[name]
+            values = torch.where(values < 0, 0, values)
+            values = torch.where(values >= num_embeddings, 0, values)
+
+            emb = self.feature_embeddings[name](values)
+            emb = self.dropout_layers[name](emb)
+            mask = (values != 0).float()
+            pooled = self.pooling_layers[name](emb, mask)
+            seq_token = self.output_projections[name](pooled).unsqueeze(1)
+            seq_tokens.append(seq_token)
+
+        if not seq_tokens:
+            return None
+        return torch.cat(seq_tokens, dim=1)
 
 
 class TaobaoUniGCRGenConfig(PretrainedConfig):

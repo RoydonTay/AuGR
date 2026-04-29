@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from sklearn.metrics import log_loss
 from torch.utils.data import IterableDataset
-from transformers import TrainingArguments, default_data_collator
+from transformers import TrainingArguments, default_data_collator, TrainerCallback
 import wandb
 
 from intentrcmd.metrics import safe_auc
@@ -18,9 +18,18 @@ from intentrcmd.modules.avazu_batch_processor import (
     AVAZU_CATEGORICAL_FEATURES,
     AvazuBatchIterableDataset,
 )
-from intentrcmd.modules.ip_base_model import StepUpdateCallback
 from intentrcmd.utils.hf_utils import Trainer
-from app.unigcr.modules.avazu_unified_model_full_self_attention import AvazuUniGCRConfig, AvazuUniGCRFullSelfAttentionModel
+from src.models.avazu_unified_model_full_self_attention import AvazuUniGCRConfig, AvazuUniGCRFullSelfAttentionModel
+
+
+class StepUpdateCallback(TrainerCallback):
+    def on_train_begin(self, args, state, control, **kwargs):
+        model = kwargs["model"]
+        model.max_steps = state.max_steps
+
+    def on_step_begin(self, args, state, control, **kwargs):
+        model = kwargs["model"]
+        model.global_step = state.global_step
 
 
 def load_avazu_vocab(avazu_vocab_path: str) -> Tuple[Dict[str, Dict[str, int]], Dict]:
