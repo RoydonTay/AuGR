@@ -80,10 +80,10 @@ class TaobaoUserSeqEncoder(nn.Module):
         return torch.cat(seq_tokens, dim=1)
 
 
-class TaobaoUniGCRGenConfig(PretrainedConfig):
-    """TaoBao UniGCR config with Avazu-style CTR + generative auxiliary head."""
+class TaobaoAuGRGenConfig(PretrainedConfig):
+    """TaoBao AuGR config with Avazu-style CTR + generative auxiliary head."""
 
-    model_type = "taobao-unigcr-gen"
+    model_type = "taobao-augr-gen"
 
     def __init__(
         self,
@@ -142,12 +142,12 @@ class TaobaoUniGCRGenConfig(PretrainedConfig):
         super().__init__(**kwargs)
 
 
-class TaobaoUniGCRGenModelV2(PreTrainedModel):
+class TaobaoAuGRGenModelV2(PreTrainedModel):
     """TaoBao adaptation with CTR head + generative cate_id head."""
 
-    config_class = TaobaoUniGCRGenConfig
+    config_class = TaobaoAuGRGenConfig
 
-    def __init__(self, config: TaobaoUniGCRGenConfig):
+    def __init__(self, config: TaobaoAuGRGenConfig):
         super().__init__(config)
         self.emb_size = config.emb_size
         self.d_model = config.d_model

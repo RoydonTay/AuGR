@@ -113,7 +113,7 @@ python -m src.training.train_taobao_gen_ctr \
   --num_workers "${NUM_WORKERS}" \
   --max_train_samples "${MAX_TRAIN_SAMPLES}" \
   --max_valid_samples "${MAX_VALID_SAMPLES}" \
-  --wandb_project "${WANDB_PROJECT:-taobao_unigcr}" \
+  --wandb_project "${WANDB_PROJECT:-taobao_augr}" \
   --wandb_run_name "${WANDB_RUN_NAME:-${exp}}" \
   --test_data_path "${TEST_DATA_PATH}" \
   --max_test_samples "${MAX_TEST_SAMPLES}" \

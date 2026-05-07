@@ -13,7 +13,7 @@ from sklearn.metrics import log_loss
 from torch.utils.data import IterableDataset
 from transformers import TrainingArguments, default_data_collator, TrainerCallback
 
-from src.models.taobao_unified_gen_model import TaobaoUniGCRGenConfig, TaobaoUniGCRGenModel
+from src.models.taobao_unified_gen_model import TaobaoAuGRGenConfig, TaobaoAuGRGenModel
 from intentrcmd.metrics import safe_auc
 from intentrcmd.modules.taobao_batch_processor import (
     TAOBAO_BASE_CATEGORICAL_FEATURES,
@@ -302,7 +302,7 @@ def main():
         for name in all_sparse_features
     }
 
-    model_config = TaobaoUniGCRGenConfig(
+    model_config = TaobaoAuGRGenConfig(
         feature_vocab_sizes=feature_vocab_sizes,
         user_feature_names=user_feature_names,
         item_feature_names=item_feature_names,
@@ -325,7 +325,7 @@ def main():
         moe_load_balance_weight=args.moe_load_balance_weight,
         moe_ffn_dim=args.moe_ffn_dim,
     )
-    model = TaobaoUniGCRGenModel(model_config)
+    model = TaobaoAuGRGenModel(model_config)
 
     run_name = args.wandb_run_name or f"taobao_ctr_{datetime.now().strftime('%m%d_%H%M%S')}"
     report_to = "wandb" if (args.wandb_project and os.getenv("WANDB_API_KEY")) else "none"
